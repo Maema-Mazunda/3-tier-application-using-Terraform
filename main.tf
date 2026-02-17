@@ -1,5 +1,6 @@
 ### https://registry.terraform.io/providers/hashicorp/aws/latest/docs
 
+# VPC 
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
 
@@ -8,6 +9,7 @@ resource "aws_vpc" "main" {
   }
 }
 
+#Internet gateway
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
 
@@ -16,7 +18,7 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
-
+#ROute table 1 in the public subnet
 resource "aws_subnet" "public_1" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.1.0/24"
@@ -29,6 +31,7 @@ resource "aws_subnet" "public_2" {
   availability_zone = "us-east-1b"
 }
 
+#ROute table 2 in the public subnet
 resource "aws_route_table" "public_rt" {
   vpc_id = aws_vpc.main.id
 
@@ -38,7 +41,7 @@ resource "aws_route_table" "public_rt" {
   }
 }
 
-
+#route table association 
 resource "aws_route_table_association" "a" {
   subnet_id      = aws_subnet.public_1.id
   route_table_id = aws_route_table.public_rt.id
@@ -49,6 +52,7 @@ resource "aws_route_table_association" "b" {
   route_table_id = aws_route_table.public_rt.id
 }
 
+#security group for web tier
 resource "aws_security_group" "web_sg" {
   name   = "web-sg"
   vpc_id = aws_vpc.main.id
@@ -114,7 +118,7 @@ resource "aws_security_group" "web_sg" {
   }
 }
 
-
+#web application instance
 resource "aws_instance" "web" {
   ami           = "ami-0c1fe732b5494dc14" # Amazon Linux 2 (us-east-1)
   instance_type = "t2.micro"
