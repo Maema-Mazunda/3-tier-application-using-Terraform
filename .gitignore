@@ -46,3 +46,9 @@ Thumbs.db
 # =====================
 *.pem
 *.key
+
+echo "awscliv2.zip" >> .gitignore
+git rm --cached awscliv2.zip
+git add .gitignore
+git commit -m "Ignore AWS CLI installer zip"
+
