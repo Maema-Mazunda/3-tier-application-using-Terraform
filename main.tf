@@ -1,11 +1,8 @@
-provider "aws" {
-  region = "us-east-1"
-}
 
 # VPC
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
-
+  
   tags = {
     Name = "3-tier-vpc"
   }
@@ -199,8 +196,8 @@ resource "aws_autoscaling_group" "web_asg" {
   max_size         = 4
 
   vpc_zone_identifier = [
-    aws_subnet.public_1.id,
-    aws_subnet.public_2.id
+    aws_subnet.private_1.id,
+    aws_subnet.private_2.id
   ]
 
   launch_template {
@@ -240,6 +237,6 @@ resource "aws_db_instance" "db" {
   db_subnet_group_name   = aws_db_subnet_group.db_subnet_group.name
 
   skip_final_snapshot = true
-  multi_az = true
+
 
 }
