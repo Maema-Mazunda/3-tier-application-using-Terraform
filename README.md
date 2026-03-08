@@ -1,21 +1,31 @@
-AWS 3-Tier Highly Available Architecture (Terraform)
+🏗 Architecture Diagram
 
-This project deploys a production-style 3-tier architecture on AWS using Terraform.
-It demonstrates high availability, scalability, and security best practices using Infrastructure as Code.
+(Add your diagram image here in your repo)
 
-The infrastructure is deployed across multiple Availability Zones and includes load balancing, auto scaling, and a managed database.
+![Architecture](architecture-diagram.png)
 
-Architecture Overview
+Architecture flow:
 
-This architecture follows the classic three-tier model:
+        Internet
+            │
+            ▼
+     Internet Gateway
+            │
+            ▼
+   Application Load Balancer
+      (Public Subnets)
+        AZ-1a     AZ-1b
+          │         │
+          ▼         ▼
+    Auto Scaling Group
+       EC2 Instances
+      (Private Subnets)
+          │
+          ▼
+     Amazon RDS MySQL
+        (Multi-AZ)
 
-Presentation Tier – Application Load Balancer
-
-Application Tier – Auto Scaling EC2 instances
-
-Data Tier – Managed relational database
-
-Key AWS services used:
+Services used:
 
 Amazon Virtual Private Cloud
 
@@ -27,74 +37,19 @@ Amazon Elastic Compute Cloud
 
 Amazon Relational Database Service
 
-AWS Internet Gateway
+🌐 Network Architecture
 
-Architecture Diagram
-                    Users
-                      │
-                      ▼
-              Internet Gateway
-                      │
-                      ▼
-            Application Load Balancer
-              (Public Subnets)
-              AZ-1a        AZ-1b
-                │             │
-                ▼             ▼
-           Web Tier Auto Scaling Group
-            EC2 Instances (Apache)
-          Private Subnet    Private Subnet
-             AZ-1a             AZ-1b
-                │
-                ▼
-            Application Layer
-                │
-                ▼
-         Amazon RDS MySQL (Multi-AZ)
-Key Features
-High Availability
-
-Infrastructure deployed across multiple Availability Zones
-
-Load balancing distributes traffic between instances
-
-Auto Scaling Group maintains healthy instance count
-
-Scalability
-
-Auto Scaling automatically adjusts capacity
-
-Stateless EC2 instances allow horizontal scaling
-
-Security
-
-Layered Security Groups control traffic between tiers
-
-Database is deployed in private subnets
-
-RDS is not publicly accessible
-
-Infrastructure as Code
-
-Entire environment provisioned using Terraform
-
-Fully reproducible and version controlled
-
-Network Architecture
-VPC
-
-CIDR Block:
+VPC CIDR
 
 10.0.0.0/16
-Subnets
-Subnet	CIDR	AZ	Purpose
-Public Subnet 1	10.0.1.0/24	us-east-1a	Load Balancer
-Public Subnet 2	10.0.2.0/24	us-east-1b	Load Balancer
-Private Subnet 1	10.0.3.0/24	us-east-1a	Application
-Private Subnet 2	10.0.4.0/24	us-east-1b	Application + DB
-Security Architecture
+Tier	Subnet	CIDR	Availability Zone
+Public	Subnet 1	10.0.1.0/24	us-east-1a
+Public	Subnet 2	10.0.2.0/24	us-east-1b
+Private	Subnet 1	10.0.3.0/24	us-east-1a
+Private	Subnet 2	10.0.4.0/24	us-east-1b
+🔐 Security Architecture
 
-Traffic flow:
+Layered security between tiers.
 
 Internet
    │
@@ -105,50 +60,52 @@ ALB Security Group
 Web Security Group
    │
    ▼
-App Security Group
+Application Security Group
    │
    ▼
-DB Security Group
+Database Security Group
 
-This creates layered security between tiers.
+Security principles used:
 
-Compute Layer
+✅ Least privilege access
+✅ Private database tier
+✅ Controlled tier-to-tier communication
 
-The application layer uses:
+⚙ Compute Layer
 
-EC2 instances launched via Launch Templates
+EC2 instances are deployed using:
 
-Instances run Apache HTTP Server
+Launch Templates
 
-Instances are managed by Auto Scaling Group
+Auto Scaling Group
 
-Startup script installs and runs Apache:
+Multi-AZ placement
+
+User data installs Apache automatically:
 
 yum install -y httpd
 systemctl start httpd
 systemctl enable httpd
 echo "Hello from Multi-AZ ASG" > /var/www/html/index.html
-Database Layer
+🗄 Database Layer
 
-The data tier uses:
+Database tier runs on:
 
-MySQL on Amazon RDS
+MySQL on Amazon Relational Database Service
+
+Features:
 
 Multi-AZ deployment
 
-Private subnet placement
-
-Benefits:
-
-Automatic failover
-
 Managed backups
 
-No direct internet access
+Private subnet isolation
 
-Terraform Resources Used
+No public internet access
 
-Main Terraform components:
+📦 Terraform Resources
+
+Main Terraform resources used:
 
 aws_vpc
 aws_subnet
@@ -162,50 +119,30 @@ aws_launch_template
 aws_autoscaling_group
 aws_db_subnet_group
 aws_db_instance
-Deployment Instructions
-1️⃣ Clone the repository
+🚀 Deployment
+
+Clone the repository
+
 git clone https://github.com/yourusername/aws-3tier-terraform
 cd aws-3tier-terraform
-2️⃣ Initialize Terraform
+
+Initialize Terraform
+
 terraform init
-3️⃣ Plan deployment
+
+Plan infrastructure
+
 terraform plan
-4️⃣ Deploy infrastructure
+
+Deploy infrastructure
+
 terraform apply
-Skills Demonstrated
+📈 Skills Demonstrated
 
-This project demonstrates practical experience with:
-
-AWS networking
-
-Multi-AZ architecture
-
-Load balancing
-
-Auto scaling
-
-Infrastructure as Code
-
-Terraform
-
-Secure VPC design
-
-Future Improvements
-
-Possible enhancements:
-
-Add NAT Gateway
-
-Add private application tier
-
-Implement CI/CD pipeline
-
-Add CloudWatch monitoring
-
-Store secrets in AWS Secrets Manager
-
-Author
-
-Maema Mazunda
-
-Aspiring Cloud Engineer focused on AWS architecture, automation, and infrastructure reliability.
+✔ AWS networking (VPC, Subnets, Routing)
+✔ Multi-AZ architecture
+✔ Load balancing
+✔ Auto scaling
+✔ Secure cloud architecture
+✔ Infrastructure as Code
+✔ Terraform
